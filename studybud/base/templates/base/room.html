@@ -1,0 +1,12 @@
+<!-- Template is the main.html -->
+{% extends 'main.html' %}
+
+<!-- Starting the block content, which will be rendered by the template -->
+{% block content %}
+
+<a href="/">Get back to home page</a>
+
+<h1>{{ room.name }}</h1>
+<p>{{room.description}}</p>
+
+{% endblock %}
