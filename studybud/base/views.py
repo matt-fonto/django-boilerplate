@@ -1,28 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .models import Room
+from .forms import RoomForm
 
 # Views, also known as the controller, are the functions that handle requests and return responses.
 
-# We will pass this data to the template to display it in the browser.
-rooms = [
-    {
-        "id": 1,
-        "name": "Learn Python",
-        "description": "Learn Python from scratch",
-    },
-    {
-        "id": 2,
-        "name": "Learn TypeScript",
-        "description": "Learn TypeScript for frontend development",
-    },
-    {
-        "id": 3,
-        "name": "Learn Laravel",
-        "description": "Learn Laravel for backend development",
-    },
-]
-
 
 def home(request):
+    # get all the rooms from the database
+    # variable: Mdodel.objects.method()
+    rooms = Room.objects.all()
     # context: data that we want to pass to the template
     context = {"rooms": rooms}
     #  render(request, template_name, data)
@@ -32,13 +18,52 @@ def home(request):
 # pk: primary key
 # dynamic url routing
 def room(request, pk):
-    # room = we set it to None because we want to check if the room exists
-    room = None
-    # loop through the rooms list
-    for i in rooms:
-        # if the id of the room matches the pk, then set room to that room
-        if i["id"] == int(pk):
-            room = i
+    # get the room with the given id
+    room = Room.objects.get(id=pk)
     # context: data that we want to pass to the template
     context = {"room": room}
     return render(request, "base/room.html", context)
+
+
+def createRoom(request):
+    form = RoomForm()  # create an instance of the RoomForm
+
+    # logic for creating a room
+    if request.method == "POST":  # if the request method is POST
+        form = RoomForm(
+            request.POST
+        )  # create an instance of the RoomForm with the data from the POST request
+        if form.is_valid():  # the type of the data is correct
+            form.save()  # save the data to the database
+            return redirect("home")  # redirect the user to the home page
+
+    context = {"form": form}  # pass the form to the template
+    return render(request, "base/room_form.html", context)
+
+
+def updateRoom(request, pk):
+    room = Room.objects.get(id=pk)  # get the room with the given id
+    # the form will be pre-filled with the data from the room
+    form = RoomForm(instance=room)  # create an instance of the RoomForm with the room
+
+    # logic for updating the room
+    if request.method == "POST":  # if the request method is POST
+        form = RoomForm(request.POST, instance=room)
+        if form.is_valid():  # the type of the data is correct
+            form.save()  # save the data to the database
+            return redirect("home")  # redirect the user to the home page
+
+    context = {"form": form}
+    return render(request, "base/room_form.html", context)
+
+
+def deleteRoom(request, pk):
+    room = Room.objects.get(id=pk)  # get the room with the given id
+
+    # logic for deleting the room
+    if request.method == "POST":  # if the request method is POST
+        room.delete()  # delete the room
+        return redirect("home")  # redirect the user to the home page
+
+    context = {"item": room}
+    return render(request, "base/delete.html", context)

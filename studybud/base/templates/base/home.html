@@ -8,12 +8,20 @@
 
 <div>
   <h2>Rooms</h2>
+  <!-- Create room -->
+  <a href="{% url 'create-room' %}">Create room</a>
+
   <ul>
-    <!-- Lopp through the data -->
+    <!-- Loop through the data -->
     {% for room in rooms %}
     <li>
+      <span>@{{room.host}}</span>
       <a href="{% url 'room' room.id %}">{{ room.name }}</a>
+      <a href="{% url 'update-room' room.id %}">Edit</a>
+      <a href="{% url 'delete-room' room.id %}">Delete</a>
       <p>{{ room.description }}</p>
+      <small>{{room.topic}}</small>
+      <hr />
     </li>
     <!-- close if/for statements -->
     {% endfor %}

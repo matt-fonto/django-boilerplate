@@ -1,0 +1,14 @@
+{% extends 'main.html' %}
+
+<!-- content -->
+{% block content %}
+<div>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <!-- form: the name as in the context of the view -->
+    {{form.as_p}}
+    <input type="submit" value="Submit" />
+    <h3>This is the create room</h3>
+  </form>
+</div>
+{% endblock %}
